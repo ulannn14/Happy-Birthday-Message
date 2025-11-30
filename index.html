@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITLE HERE</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            color: #8a1c4a;
+        }
+
+        /* Password Modal */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .password-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: bounceIn 1s forwards;
+        }
+
+        .password-content h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #d81b60;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffb7c5;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .password-input:focus {
+            border-color: #d81b60;
+        }
+
+        .submit-btn {
+            background: #d81b60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #b71550;
+            transform: scale(1.05);
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+            transition: opacity 0.8s ease;
+        }
+
+        .welcome-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 48px;
+            color: #d81b60;
+            text-align: center;
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Content */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #d81b60;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px);
+        }
+
+        .tab.active {
+            background: white;
+            color: #d81b60;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Love Letter Tab */
+        .letter {
+            padding: 30px;
+            /* more space inside */
+            line-height: 1.8;
+            /* make text easier to read */
+            background: #fff5f7;
+            border-radius: 20px;
+            /* softer corners */
+            border: 2px dashed #ffb7c5;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+
+        .letter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .letter h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #d81b60;
+        }
+
+        .letter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-bottom: 15px;
+            /* adds space between paragraphs */
+            font-size: 17px;
+            /* slightly larger text */
+            text-align: justify;
+        }
+
+        .letter.expanded .letter-content {
+            max-height: 80vh;
+            /* gives more space to read */
+            overflow-y: auto;
+            padding-right: 15px;
+            padding-top: 10px;
+            /* small top padding */
+            scroll-behavior: smooth;
+        }
+
+
+        .letter-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .letter-content::-webkit-scrollbar-thumb {
+            background: #ffb7c5;
+            border-radius: 3px;
+        }
+
+        /* Music Tab */
+        .song {
+            background: #f8e8ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .song-icon {
+            font-size: 24px;
+            color: #d81b60;
+        }
+
+        .song-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .song-info p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .music-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .music-controls button {
+            background: #d81b60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .music-controls button:hover {
+            background: #b71550;
+        }
+
+        /* Notes Tab */
+        .note {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #d81b60;
+        }
+
+        /* Gallery Tab */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Decorative Elements */
+        .heart,
+        .teddy-bear {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .heart {
+            color: #d81b60;
+            font-size: 24px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .teddy-bear {
+            font-size: 32px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-message {
+                font-size: 36px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <h2>Enter the secret code</h2>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Our special word...">
+            <button class="submit-btn" id="submitPassword">Enter</button>
+        </div>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1 class="welcome-message">WELCOME MESSAGE HERE</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="tabs">
+            <button class="tab active" data-tab="love-letter"><span>❤️</span> Love Letter</button>
+            <button class="tab" data-tab="music"><span>🎵</span> Music</button>
+            <button class="tab" data-tab="notes"><span>📝</span> Notes</button>
+            <button class="tab" data-tab="gallery"><span>🌷</span> Gallery</button>
+        </div>
+
+        <div class="content-area">
+            <!-- Love Letter Tab SAMPLE MESSAGE -->
+            <div class="tab-content active" id="love-letter">
+                <h2>Hi, baby.</h2>
+                <div class="letter" id="loveLetter">
+                    <div class="letter-header">
+                        <h3>A Letter For You</h3>
+                        <span>👇 Click to open</span>
+                    </div>
+                    <div class="letter-content">
+                        <p>Hey love, I just wanted to remind you—out of nowhere—that you’re one of the best parts of my life. </p>
+                        <p>I hope you know how much light you bring into my days without even trying.</p>
+
+                        <p>You make everything feel a little calmer, a little brighter, and a lot more meaningful.</p>
+
+                        <p>I’m grateful for you… for your kindness, your laugh, your presence, and the way you somehow make my heart feel safe.</p>
+
+                        <p>I hope today treats you gently, and if it doesn’t, I’m always here to hold you through it. </p>
+
+                        <p>You’re loved. So much more than you know.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Music Tab -->
+            <div class="tab-content" id="music">
+                <h2>Songs that remind me of you</h2>
+                <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4> Falling For You</h4>
+                        <p>by The 1975</p>
+                        <audio id="song1" src="music/song1.mp3"></audio>
+                        <div class="music-controls">
+                            <button onclick="playSong('song1')">▶ Play</button>
+                            <button onclick="pauseSong('song1')">⏸ Pause</button>
+                            <button onclick="stopSong('song1')">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4>About You</h4>
+                        <p>by The 1975</p>
+                        <audio id="song2" src="music/song2.mp3"></audio>
+                        <div class="music-controls">
+                            <button onclick="playSong('song2')">▶ Play</button>
+                            <button onclick="pauseSong('song2')">⏸ Pause</button>
+                            <button onclick="stopSong('song2')">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4>Labyrinth</h4>
+                        <p>by Taylor Swift</p>
+                        <audio id="song3" src="music/song3.mp3"></audio>
+                        <div class="music-controls">
+                            <button onclick="playSong('song3')">▶ Play</button>
+                            <button onclick="pauseSong('song3')">⏸ Pause</button>
+                            <button onclick="stopSong('song3')">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4>Sure Thing</h4>
+                        <p>by Miguel</p>
+                        <audio id="song4" src="music/song4.mp3"></audio>
+                        <div class="music-controls">
+                            <button onclick="playSong('song4')">▶ Play</button>
+                            <button onclick="pauseSong('song4')">⏸ Pause</button>
+                            <button onclick="stopSong('song4')">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="song">
+                    <div class="song-icon">🎵</div>
+                    <div class="song-info">
+                        <h4>Best Part</h4>
+                        <p>by Daniel Caesar</p>
+                        <audio id="song5" src="music/song5.mp3"></audio>
+                        <div class="music-controls">
+                            <button onclick="playSong('song5')">▶ Play</button>
+                            <button onclick="pauseSong('song5')">⏸ Pause</button>
+                            <button onclick="stopSong('song5')">⏹ Stop</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div class="tab-content" id="notes">
+                <h2>Some reminders</h2>
+                <div class="note">
+                    <p>as long as i exist you will always be loved.</p>
+                </div>
+                <div class="note">
+                    <p>you are good enough and worth it.</p>
+                </div>
+                <div class="note">
+                    <p>i'm always proud of you, baby.</p>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div class="tab-content" id="gallery">
+                <h2>Yours</h2>
+                <div class="gallery">
+                    <div class="gallery-item"><img src="images/flower1.jpg" alt="Flower 1"></div>
+                    <div class="gallery-item"><img src="images/flower2.jpg" alt="Flower 2"></div>
+                    <div class="gallery-item"><img src="images/flower3.jpg" alt="Flower 3"></div>
+                    <div class="gallery-item"><img src="images/flower4.jpg" alt="Flower 4"></div>
+                    <div class="gallery-item"><img src="images/flower5.jpg" alt="Flower 5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <img src="" alt="Expanded image">
+    </div>
+
+    <!-- Decorative elements -->
+    <div class="heart" style="top: 10%; left: 5%;">❤️</div>
+    <div class="heart" style="top: 20%; right: 10%;">❤️</div>
+    <div class="teddy-bear" style="bottom: 10%; right: 5%;">🧸</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordModal = document.getElementById('passwordModal');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainContent = document.getElementById('mainContent');
+            const passwordInput = document.getElementById('passwordInput');
+            const submitPassword = document.getElementById('submitPassword');
+
+            submitPassword.addEventListener('click', function () {
+                if (passwordInput.value === 'iloveyou') {    //PASSWORD HERE
+                    passwordModal.style.opacity = '0';
+                    setTimeout(() => {
+                        passwordModal.style.display = 'none';
+                        welcomeScreen.style.display = 'flex';
+                        setTimeout(() => {
+                            welcomeScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                welcomeScreen.style.display = 'none';
+                                mainContent.style.display = 'block';
+                            }, 800);
+                        }, 2500);
+                    }, 500);
+                } else {
+                    passwordInput.value = '';
+                    passwordInput.placeholder = 'Try again, my love...';
+                    passwordInput.style.borderColor = '#ff4d4d';
+                    setTimeout(() => {
+                        passwordInput.style.borderColor = '#ffb7c5';
+                        passwordInput.placeholder = 'Our special word...';
+                    }, 1500);
+                }
+            });
+
+            passwordInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') submitPassword.click();
+            });
+
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function () {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Letter toggle
+            const letter = document.getElementById('loveLetter');
+            letter.addEventListener('click', () => {
+                letter.classList.toggle('expanded');
+            });
+
+            // Lightbox
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = lightbox.querySelector('img');
+
+            document.querySelectorAll('.gallery-item img').forEach(img => {
+                img.addEventListener('click', () => {
+                    lightboxImg.src = img.src;
+                    lightbox.classList.add('active');
+                });
+            });
+
+            lightbox.addEventListener('click', () => {
+                lightbox.classList.remove('active');
+            });
+        });
+
+        // Music Controls
+        function playSong(id) {
+            const song = document.getElementById(id);
+            pauseAllSongs();
+            song.play();
+        }
+
+        function pauseSong(id) {
+            document.getElementById(id).pause();
+        }
+
+        function stopSong(id) {
+            const song = document.getElementById(id);
+            song.pause();
+            song.currentTime = 0;
+        }
+
+        function pauseAllSongs() {
+            document.querySelectorAll('audio').forEach(a => {
+                a.pause();
+                a.currentTime = 0;
+            });
+        }
+    </script>
+</body>
+
+</html>
